@@ -1,0 +1,4 @@
+name: getBoxSettings
+version: '${project.version}'
+main: dev.gether.getboxsettings.GetBoxSettings
+api-version: 1.16
