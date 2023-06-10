@@ -1,41 +1,20 @@
-package dev.gether.getboxsettings.data.change.coins;
+package dev.gether.getboxsettings.data.change;
 
 import dev.gether.getboxsettings.data.change.ChangeManager;
+import dev.gether.getboxsettings.data.change.coins.ItemCoinsChange;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class CoinsManager {
+public class ChangeFeatures {
 
-    private final ChangeManager changeManager;
-    public CoinsManager(ChangeManager changeManager)
-    {
-        this.changeManager = changeManager;
-    }
-
-    public void changeToCoin(Player player)
-    {
-        for(ItemCoinsChange itemCoinsChange : changeManager.getChangeList())
-        {
-            int amount = calcItem(player, itemCoinsChange.getFromItem());
-
-            int finalAmount = amount/itemCoinsChange.getFromItem().getAmount();
-            if(finalAmount<=0)
-                continue;
-
-            int getAmount = finalAmount*itemCoinsChange.getToItem().getAmount();
-            removeItem(player, itemCoinsChange.getFromItem().clone(), finalAmount*itemCoinsChange.getFromItem().getAmount());
-            addItem(player, itemCoinsChange.getToItem().clone(), getAmount);
-        }
-    }
-
-    private void addItem(Player player, ItemStack itemStack, int amount)
+    public void addItem(Player player, ItemStack itemStack, int amount)
     {
         itemStack.setAmount(amount);
         player.getInventory().addItem(itemStack);
     }
 
-    private void removeItem(Player player, ItemStack fromItem, int amount)
+    public void removeItem(Player player, ItemStack fromItem, int amount)
     {
         int removeItem = amount;
 
@@ -61,7 +40,7 @@ public class CoinsManager {
         }
     }
 
-    private int calcItem(Player player, ItemStack fromItem)
+    public int calcItem(Player player, ItemStack fromItem)
     {
         int amount = 0;
         for(ItemStack itemStack : player.getInventory())

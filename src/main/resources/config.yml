@@ -1,0 +1,95 @@
+# /getchange <coins/money/reload> - permission: getchange.admin
+# /getwymien [coins/money/bloki] - permission: getwymien.use
+# /ustawienia - permission: getboxsettings.use
+command:
+  settings: "ustawienia"
+  wymien: "getwymien"
+
+# type [ SQLITE, MYSQL ]
+database: SQLITE
+
+auto-sell:
+  enable: true
+  # co ile sekund ma sprawdzac itemy
+  time: 1
+
+sqlite:
+  name: "get_boxsettings"
+
+mysql:
+  host: localhost
+  username: root
+  password: ""
+  database: database
+  port: 3306
+  ssl: false
+
+action-bar: "{block_conv} {money_conv} {sell_money} &7/ustawienia"
+
+lang:
+  status-on: "&awłączone"
+  status-off: "&cwylacozne"
+  status-action-on: "&a&l✔"
+  status-action-off: "&c&l✖"
+  block-conv: "&6Bloki: {status}"
+  money_conv: "&6Waluta: {status}"
+  sell_money: "&6Sprzedaż monet: {status}"
+
+items:
+  BLOCK_CONV:
+    enable: true
+    slot: 20
+    material: DIAMOND_BLOCK
+    displayname: "&eAutomatyczne &6przerabianie &ena Bloki"
+    lore:
+      - "&8* &7Status: {status}"
+      - "&7"
+      - "&eKliknij, aby zmienic status"
+  MONEY_CONV:
+    enable: true
+    slot: 22
+    material: SUNFLOWER
+    displayname: "&eAutomatyczna &6przemiana &ena Walute"
+    lore:
+      - "&8* &7Status: {status}"
+      - "&7"
+      - "&eKliknij, aby zmienic status"
+  SELL_MONEY:
+    enable: true
+    slot: 24
+    material: GOLD_NUGGET
+    displayname: "&eAutomatyczne &fsprzedawanie &eMonet"
+    lore:
+      - "&8* &7Status: {status}"
+      - "&7"
+      - "&eKliknij, aby zmienic status"
+  ACTION_BAR:
+    enable: true
+    slot: 40
+    material: CLOCK
+    displayname: "&eWiadomosci &fActionbar"
+    lore:
+      - "&8* &7Status: {status}"
+      - "&7"
+      - "&eKliknij, aby zmienic status"
+
+inv:
+  size: 45
+  title: "&6&lUstawienia"
+
+backgrounds:
+  '1':
+    material: WHITE_STAINED_GLASS_PANE
+    displayname: "&7"
+    lore: []
+    slots: [2,3,5,6,18,26,38,39,41,42]
+  '2':
+    material: YELLOW_STAINED_GLASS_PANE
+    displayname: "&7"
+    lore: []
+    slots: [0,8,36,44]
+  '3':
+    material: ORANGE_STAINED_GLASS_PANE
+    displayname: "&7"
+    lore: []
+    slots: [1,7,9,17,27,35,37,43]

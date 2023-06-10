@@ -1,2 +1,6 @@
-package dev.gether.getboxsettings.database;public enum DatabaseType {
+package dev.gether.getboxsettings.database;
+
+public enum DatabaseType {
+    SQLITE,
+    MYSQL
 }

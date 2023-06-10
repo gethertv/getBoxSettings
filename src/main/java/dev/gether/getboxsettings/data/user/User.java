@@ -1,4 +1,4 @@
-package dev.gether.getboxsettings.data;
+package dev.gether.getboxsettings.data.user;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;

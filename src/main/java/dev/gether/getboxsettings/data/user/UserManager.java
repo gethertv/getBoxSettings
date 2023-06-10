@@ -1,11 +1,10 @@
-package dev.gether.getboxsettings.data;
+package dev.gether.getboxsettings.data.user;
 
 import dev.gether.getboxsettings.GetBoxSettings;
+import dev.gether.getboxsettings.data.ItemBg;
 import dev.gether.getboxsettings.utils.ColorFixer;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -52,6 +51,11 @@ public class UserManager {
     public UserManager(GetBoxSettings plugin)
     {
         this.plugin = plugin;
+        injectConfig();
+    }
+
+    public void injectConfig() {
+        bgItems.clear();
         for(String key : plugin.getConfig().getConfigurationSection("backgrounds").getKeys(false))
         {
             ItemStack itemStack = getItemFromConfig("backgrounds."+key);

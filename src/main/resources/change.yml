@@ -1,0 +1,18 @@
+change-item: {}
+change-money: {}
+change-block:
+  '1':
+    from:
+      material: DIAMOND
+      amount: 9
+    to:
+      material: DIAMOND_BLOCK
+      amount: 1
+  '2':
+    from:
+      material: GOLD_INGOT
+      amount: 9
+    to:
+      material: GOLD_BLOCK
+      amount: 1
+
