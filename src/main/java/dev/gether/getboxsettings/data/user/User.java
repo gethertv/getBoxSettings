@@ -22,7 +22,7 @@ public class User {
 
     public User(Player player)
     {
-        this(player, false, false, false, false);
+        this(player, false, false, false, true);
     }
 
     public void setSettingsInv(Inventory settingsInv) {

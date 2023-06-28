@@ -3,6 +3,7 @@ package dev.gether.getboxsettings;
 import dev.gether.getboxsettings.cmd.GetChangeCmd;
 import dev.gether.getboxsettings.cmd.GetSettingsCmd;
 import dev.gether.getboxsettings.cmd.GetWymienCmd;
+import dev.gether.getboxsettings.data.Cuboid;
 import dev.gether.getboxsettings.data.change.ChangeManager;
 import dev.gether.getboxsettings.data.user.UserManager;
 import dev.gether.getboxsettings.database.DatabaseManager;
@@ -12,6 +13,7 @@ import dev.gether.getboxsettings.database.SQLite;
 import dev.gether.getboxsettings.file.ChangeFile;
 import dev.gether.getboxsettings.listeners.BreakBlockListener;
 import dev.gether.getboxsettings.listeners.ConnectionListener;
+import dev.gether.getboxsettings.listeners.InteractListener;
 import dev.gether.getboxsettings.listeners.InventoryClickListener;
 import dev.gether.getboxsettings.tasks.ActionBarTask;
 import dev.gether.getboxsettings.tasks.AutoChange;
@@ -19,10 +21,20 @@ import dev.gether.getboxsettings.tasks.AutoSave;
 import dev.gether.getboxsettings.utils.ColorFixer;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class GetBoxSettings extends JavaPlugin {
 
@@ -32,6 +44,10 @@ public final class GetBoxSettings extends JavaPlugin {
     private ChangeManager changeManager;
 
     private static Economy econ = null;
+
+    private List<Cuboid> disableTaskRegion = new ArrayList<>();
+    private ItemStack selector;
+
     @Override
     public void onEnable() {
         instance = this;
@@ -53,16 +69,16 @@ public final class GetBoxSettings extends JavaPlugin {
         userManager = new UserManager(this);
         changeManager = new ChangeManager();
 
+        implementsSelector();
         loadingUsersOnline();
 
-        String settings = getConfig().getString("command.settings");
-        String wymien = getConfig().getString("command.wymien");
-        getServer().getCommandMap().register(settings, new GetSettingsCmd(settings));
-        getServer().getCommandMap().register(wymien, new GetWymienCmd(wymien));
-        getServer().getCommandMap().register("getchange", new GetChangeCmd("getchange"));
+        implementsCmd();
+
+        loadDisableRegion();
 
         getServer().getPluginManager().registerEvents(new ConnectionListener(), this);
         getServer().getPluginManager().registerEvents(new InventoryClickListener(), this);
+        getServer().getPluginManager().registerEvents(new InteractListener(this), this);
         getServer().getPluginManager().registerEvents(new BreakBlockListener(userManager, changeManager), this);
 
         new ActionBarTask(userManager).runTaskTimer(this, 10L, 10L);
@@ -70,6 +86,46 @@ public final class GetBoxSettings extends JavaPlugin {
 
         if(getConfig().getBoolean("auto-sell.enable"))
             new AutoChange(changeManager).runTaskTimer(this, 20L*getConfig().getInt("auto-sell.time"), 20L*getConfig().getInt("auto-sell.time"));
+
+
+
+    }
+
+    private void loadDisableRegion() {
+        if(!getConfig().isSet("disable-regions"))
+            return;
+
+        if(!disableTaskRegion.isEmpty())
+            disableTaskRegion.clear();
+
+        for(String key : getConfig().getConfigurationSection("disable-regions").getKeys(false))
+        {
+            ConfigurationSection configurationSection = getConfig().getConfigurationSection("disable-regions." + key);
+            Location first = configurationSection.getLocation(".first-loc");
+            Location second = configurationSection.getLocation(".second-loc");
+            disableTaskRegion.add(new Cuboid(first, second));
+        }
+    }
+
+    private void implementsSql() {
+        DatabaseType databaseType = DatabaseType.valueOf(getConfig().getString("database"));
+        if(databaseType==DatabaseType.MYSQL)
+            setupMysql();
+
+        if(databaseType==DatabaseType.SQLITE)
+            databaseManager = new SQLite(getConfig().getString("sqlite.name"));
+
+    }
+    private void implementsCmd() {
+        String settings = getConfig().getString("command.settings");
+        String wymien = getConfig().getString("command.wymien");
+
+        getCommand(wymien).setExecutor(new GetWymienCmd());
+        getCommand(settings).setExecutor(new GetSettingsCmd());
+        GetChangeCmd getChangeCmd = new GetChangeCmd();
+        getCommand("getchange").setExecutor(getChangeCmd);
+        getCommand("getchange").setTabCompleter(getChangeCmd);
+
 
     }
 
@@ -79,6 +135,7 @@ public final class GetBoxSettings extends JavaPlugin {
         ChangeFile.loadFile();
         getUserManager().injectConfig();
         changeManager.injectData();
+        loadDisableRegion();
         player.sendMessage(ColorFixer.addColors("&aPomyslnie przeladowano plugin!"));
     }
 
@@ -103,16 +160,14 @@ public final class GetBoxSettings extends JavaPlugin {
         }.runTaskAsynchronously(this);
     }
 
-    private void implementsSql() {
-        DatabaseType databaseType = DatabaseType.valueOf(getConfig().getString("database"));
-        if(databaseType==DatabaseType.MYSQL)
-            setupMysql();
 
-        if(databaseType==DatabaseType.SQLITE)
-            databaseManager = new SQLite(getConfig().getString("sqlite.name"));
-
+    private void implementsSelector()
+    {
+        selector = new ItemStack(Material.STICK);
+        ItemMeta itemMeta = selector.getItemMeta();
+        itemMeta.setDisplayName(ColorFixer.addColors("&a&lSelektor &7(getboxsettings)"));
+        selector.setItemMeta(itemMeta);
     }
-
     private void setupMysql() {
         String host = getConfig().getString("mysql.host");
         String username = getConfig().getString("mysql.username");
@@ -131,7 +186,10 @@ public final class GetBoxSettings extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+
+        Bukkit.getScheduler().cancelTasks(this);
+        HandlerList.unregisterAll(this);
+
     }
 
     public ChangeManager getChangeManager() {
@@ -148,6 +206,14 @@ public final class GetBoxSettings extends JavaPlugin {
 
     public static Economy getEcon() {
         return econ;
+    }
+
+    public ItemStack getSelector() {
+        return selector;
+    }
+
+    public List<Cuboid> getDisableTaskRegion() {
+        return disableTaskRegion;
     }
 
     public UserManager getUserManager() {

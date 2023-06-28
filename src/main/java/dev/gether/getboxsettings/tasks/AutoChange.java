@@ -1,6 +1,7 @@
 package dev.gether.getboxsettings.tasks;
 
 import dev.gether.getboxsettings.GetBoxSettings;
+import dev.gether.getboxsettings.data.Cuboid;
 import dev.gether.getboxsettings.data.change.ChangeManager;
 import dev.gether.getboxsettings.data.user.User;
 import org.bukkit.Bukkit;
@@ -19,19 +20,25 @@ public class AutoChange extends BukkitRunnable {
     @Override
     public void run() {
         Bukkit.getOnlinePlayers().forEach(player -> {
+            for(Cuboid cuboid : GetBoxSettings.getInstance().getDisableTaskRegion())
+            {
+                if(cuboid.contains(player.getLocation()))
+                    return;
+            }
             User user = GetBoxSettings.getInstance().getUserManager().getUserData().get(player.getUniqueId());
 
-            if(user!=null)
-            {
-                if(user.isEnableBlockConv())
-                    changeManager.changeToBlock(player);
+            if(user==null)
+                return;
 
-                if(user.isEnableMoneyConv())
-                    changeManager.changeToCoin(player);
+            if(user.isEnableBlockConv())
+                changeManager.changeToBlock(player);
 
-                if(user.isEnableSellMoney())
-                    changeManager.changeToMoney(player);
-            }
+            if(user.isEnableMoneyConv())
+                changeManager.changeToCoin(player);
+
+            if(user.isEnableSellMoney())
+                changeManager.changeToMoney(player);
+
         });
     }
 }

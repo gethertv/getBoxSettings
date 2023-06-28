@@ -4,18 +4,16 @@ import dev.gether.getboxsettings.GetBoxSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class GetSettingsCmd extends Command {
+public class GetSettingsCmd implements CommandExecutor {
 
-    public GetSettingsCmd(@NotNull String name) {
-        super(name);
-    }
 
     @Override
-    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if(!(sender instanceof Player))
             return false;
 

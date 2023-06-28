@@ -71,6 +71,7 @@ public class ChangeManager {
             int getAmount = finalAmount*moneyChange.getItemStack().getAmount();
             changeFeatures.removeItem(player, moneyChange.getItemStack().clone(), finalAmount*moneyChange.getItemStack().getAmount());
             GetBoxSettings.getEcon().depositPlayer(player, getAmount*moneyChange.getPrice());
+            player.updateInventory();
         }
     }
     public void changeToBlock(Player player)

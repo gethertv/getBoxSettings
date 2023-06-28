@@ -3,7 +3,7 @@
 # /ustawienia - permission: getboxsettings.use
 command:
   settings: "ustawienia"
-  wymien: "getwymien"
+  wymien: "wymien"
 
 # type [ SQLITE, MYSQL ]
 database: SQLITE
