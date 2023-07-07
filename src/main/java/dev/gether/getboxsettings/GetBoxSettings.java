@@ -117,11 +117,9 @@ public final class GetBoxSettings extends JavaPlugin {
 
     }
     private void implementsCmd() {
-        String settings = getConfig().getString("command.settings");
-        String wymien = getConfig().getString("command.wymien");
 
-        getCommand(wymien).setExecutor(new GetWymienCmd());
-        getCommand(settings).setExecutor(new GetSettingsCmd());
+        getCommand("wymien").setExecutor(new GetWymienCmd());
+        getCommand("ustawienia").setExecutor(new GetSettingsCmd());
         GetChangeCmd getChangeCmd = new GetChangeCmd();
         getCommand("getchange").setExecutor(getChangeCmd);
         getCommand("getchange").setTabCompleter(getChangeCmd);

@@ -1,9 +1,6 @@
-# /getchange <coins/money/reload> - permission: getchange.admin
+# /getchange <coins/money/reload/selector/region> - permission: getchange.admin
 # /getwymien [coins/money/bloki] - permission: getwymien.use
 # /ustawienia - permission: getboxsettings.use
-command:
-  settings: "ustawienia"
-  wymien: "wymien"
 
 # type [ SQLITE, MYSQL ]
 database: SQLITE
