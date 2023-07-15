@@ -28,7 +28,7 @@ public class MySQL extends DatabaseManager {
             "`block_convert` BOOLEAN NOT NULL DEFAULT '0'," +
             "`money_convert` BOOLEAN NOT NULL DEFAULT '0'," +
             "`sell_money` BOOLEAN NOT NULL DEFAULT '0'," +
-            "`action_bar` BOOLEAN NOT NULL DEFAULT '0'" +
+            "`action_bar` BOOLEAN NOT NULL DEFAULT '1'" +
             ");";
 
     public MySQL(String host, String username, String password, String database, String port, boolean ssl) {

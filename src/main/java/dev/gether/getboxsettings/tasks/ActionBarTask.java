@@ -21,6 +21,9 @@ public class ActionBarTask extends BukkitRunnable {
     public void run() {
 
         for (Player player : Bukkit.getOnlinePlayers()) {
+            if(GetBoxSettings.getInstance().getDisableActionBar().contains(player))
+                continue;
+
             User user = GetBoxSettings.getInstance().getUserManager().getUserData().get(player.getUniqueId());
             if(user==null)
                 continue;

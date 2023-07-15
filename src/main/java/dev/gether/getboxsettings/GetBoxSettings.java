@@ -1,5 +1,6 @@
 package dev.gether.getboxsettings;
 
+import dev.gether.getboxsettings.api.IBoxSettingsApi;
 import dev.gether.getboxsettings.cmd.GetChangeCmd;
 import dev.gether.getboxsettings.cmd.GetSettingsCmd;
 import dev.gether.getboxsettings.cmd.GetWymienCmd;
@@ -36,7 +37,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GetBoxSettings extends JavaPlugin {
+public final class GetBoxSettings extends JavaPlugin implements IBoxSettingsApi {
 
     private static GetBoxSettings instance;
     private DatabaseManager databaseManager;
@@ -47,6 +48,8 @@ public final class GetBoxSettings extends JavaPlugin {
 
     private List<Cuboid> disableTaskRegion = new ArrayList<>();
     private ItemStack selector;
+
+    private List<Player> disableActionBar = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -190,6 +193,10 @@ public final class GetBoxSettings extends JavaPlugin {
 
     }
 
+    public List<Player> getDisableActionBar() {
+        return disableActionBar;
+    }
+
     public ChangeManager getChangeManager() {
         return changeManager;
     }
@@ -216,5 +223,15 @@ public final class GetBoxSettings extends JavaPlugin {
 
     public UserManager getUserManager() {
         return userManager;
+    }
+
+    @Override
+    public void disableActionBar(Player player) {
+        getDisableActionBar().add(player);
+    }
+
+    @Override
+    public void enableActionBar(Player player) {
+        getDisableActionBar().remove(player);
     }
 }

@@ -23,7 +23,7 @@ public class SQLite extends DatabaseManager{
             "    block_convert INTEGER NOT NULL DEFAULT 0," +
             "    money_convert INTEGER NOT NULL DEFAULT 0," +
             "    sell_money INTEGER NOT NULL DEFAULT 0," +
-            "    action_bar INTEGER NOT NULL DEFAULT 0" +
+            "    action_bar INTEGER NOT NULL DEFAULT 1" +
             ");";
 
     public SQLite(String database){
