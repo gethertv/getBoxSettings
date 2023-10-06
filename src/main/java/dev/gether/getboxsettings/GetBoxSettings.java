@@ -12,6 +12,7 @@ import dev.gether.getboxsettings.database.DatabaseType;
 import dev.gether.getboxsettings.database.MySQL;
 import dev.gether.getboxsettings.database.SQLite;
 import dev.gether.getboxsettings.file.ChangeFile;
+import dev.gether.getboxsettings.hook.HookManager;
 import dev.gether.getboxsettings.listeners.BreakBlockListener;
 import dev.gether.getboxsettings.listeners.ConnectionListener;
 import dev.gether.getboxsettings.listeners.InteractListener;
@@ -24,7 +25,6 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -51,6 +51,8 @@ public final class GetBoxSettings extends JavaPlugin implements IBoxSettingsApi 
 
     private List<Player> disableActionBar = new ArrayList<>();
 
+    private HookManager hookManager;
+
     @Override
     public void onEnable() {
         instance = this;
@@ -69,6 +71,9 @@ public final class GetBoxSettings extends JavaPlugin implements IBoxSettingsApi 
             return;
         }
 
+        // implement hook manager
+        hookManager = new HookManager();
+
         userManager = new UserManager(this);
         changeManager = new ChangeManager();
 
@@ -84,7 +89,7 @@ public final class GetBoxSettings extends JavaPlugin implements IBoxSettingsApi 
         getServer().getPluginManager().registerEvents(new InteractListener(this), this);
         getServer().getPluginManager().registerEvents(new BreakBlockListener(userManager, changeManager), this);
 
-        new ActionBarTask(userManager).runTaskTimer(this, 10L, 10L);
+        new ActionBarTask(this, userManager).runTaskTimer(this, 10L, 10L);
         new AutoSave(this).runTaskTimer(this, 20L*300, 20L*300);
 
         if(getConfig().getBoolean("auto-sell.enable"))
@@ -233,5 +238,9 @@ public final class GetBoxSettings extends JavaPlugin implements IBoxSettingsApi 
     @Override
     public void enableActionBar(Player player) {
         getDisableActionBar().remove(player);
+    }
+
+    public HookManager getHookManager() {
+        return hookManager;
     }
 }

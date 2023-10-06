@@ -6,7 +6,7 @@
 
     <groupId>dev.gether</groupId>
     <artifactId>getBoxSettings</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <packaging>jar</packaging>
 
     <name>getBoxSettings</name>
@@ -123,6 +123,13 @@
             <artifactId>paper-api</artifactId>
             <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.q1zz.combatlog.combat</groupId>
+            <artifactId>CombatLogPlugin</artifactId>
+            <version>0.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/q1zZ-CombatLog.jar</systemPath>
         </dependency>
     </dependencies>
 </project>

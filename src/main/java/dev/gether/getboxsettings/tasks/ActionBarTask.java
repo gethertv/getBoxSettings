@@ -3,6 +3,8 @@ package dev.gether.getboxsettings.tasks;
 import dev.gether.getboxsettings.GetBoxSettings;
 import dev.gether.getboxsettings.data.user.User;
 import dev.gether.getboxsettings.data.user.UserManager;
+import dev.gether.getboxsettings.hook.HookManager;
+import dev.gether.getboxsettings.hook.Q1zZCombatLogHook;
 import dev.gether.getboxsettings.utils.ColorFixer;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -10,17 +12,31 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.lang.reflect.Method;
+
 public class ActionBarTask extends BukkitRunnable {
     private final UserManager userManager;
+    private final GetBoxSettings plugin;
 
-    public ActionBarTask(UserManager userManager)
+    public ActionBarTask(GetBoxSettings plugin, UserManager userManager)
     {
+        this.plugin = plugin;
         this.userManager = userManager;
     }
     @Override
     public void run() {
 
+        HookManager hookManager = plugin.getHookManager();
+        boolean isHookCombat = plugin.getHookManager().isQ1zZCombatLogHook();
+        Q1zZCombatLogHook q1zZCombatLogHook = hookManager.getQ1zZCombatLogHook();
         for (Player player : Bukkit.getOnlinePlayers()) {
+
+            if(isHookCombat) {
+                boolean combat = q1zZCombatLogHook.isCombat(player.getUniqueId());
+                if(combat)
+                    continue;
+            }
+
             if(GetBoxSettings.getInstance().getDisableActionBar().contains(player))
                 continue;
 
@@ -43,4 +59,7 @@ public class ActionBarTask extends BukkitRunnable {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ColorFixer.addColors(actionMessage)));
         }
     }
+
+
 }
+
